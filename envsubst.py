@@ -63,7 +63,7 @@ _extended_re = re.compile(r'\$\{([A-Za-z0-9_]+)((:?-)([^}]+))?\}')
 
 def envsubst(string):
     """
-    Substitue environment variables in the given string
+    Substitute environment variables in the given string
 
     The following forms are supported:
 

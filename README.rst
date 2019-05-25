@@ -1,7 +1,7 @@
 python-envsubst
 ===============
 
-Substitue environment variables in a string::
+Substitute environment variables in a string::
 
     >>> import os
     >>> from envsubst import envsubst
