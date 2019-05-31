@@ -1,4 +1,5 @@
 import os
+import sys
 import unittest
 from envsubst import envsubst
 
@@ -143,5 +144,18 @@ class TestEnvsubst(unittest.TestCase):
         test_fmt = 'abc {0} def'
         test_str = test_fmt.format('${TEST:-$DEFAULT}')
         expected = test_fmt.format(default_val)
+        actual = envsubst(test_str)
+        self.assertEqual(actual, expected)
+
+    def test_argv(self):
+        test_val = 'test argv value'
+        try:
+            sys.argv[1] = test_val
+        except IndexError:
+            sys.argv.append(test_val)
+
+        test_fmt = 'abc {0} def'
+        test_str = test_fmt.format('$1')
+        expected = test_fmt.format(test_val)
         actual = envsubst(test_str)
         self.assertEqual(actual, expected)

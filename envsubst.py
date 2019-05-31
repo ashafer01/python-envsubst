@@ -29,15 +29,27 @@ For more info:
 
 import re
 import os
+import sys
 
 
 _simple_re = re.compile(r'(?<!\\)\$([A-Za-z0-9_]+)')
 _extended_re = re.compile(r'(?<!\\)\$\{([A-Za-z0-9_]+)((:?-)([^}]+))?\}')
 
 
+def _resolve_var(var_name, default=None):
+    try:
+        index = int(var_name)
+        try:
+            return sys.argv[index]
+        except IndexError:
+            return default
+    except ValueError:
+        return os.environ.get(var_name, default)
+
+
 def _repl_simple_env_var(m):
     var_name = m.group(1)
-    return os.environ.get(var_name, '')
+    return _resolve_var(var_name, '')
 
 
 def _repl_extended_env_var(m):
@@ -48,18 +60,18 @@ def _repl_extended_env_var(m):
         default = _simple_re.sub(_repl_simple_env_var, default)
         if m.group(3) == ':-':
             # use default if var is unset or empty
-            env_var = os.environ.get(var_name)
+            env_var = _resolve_var(var_name)
             if env_var:
                 return env_var
             else:
                 return default
         elif m.group(3) == '-':
             # use default if var is unset
-            return os.environ.get(var_name, default)
+            return _resolve_var(var_name, default)
         else:
             raise RuntimeError('unexpected string matched regex')
     else:
-        return os.environ.get(var_name, '')
+        return _resolve_var(var_name, '')
 
 
 def envsubst(string):

@@ -16,3 +16,8 @@ Substitute environment variables in a string::
     
     >>> print(envsubst('$USER@$HOST ${PS1-foo}:'))
     ashafer01@github.com :
+
+    >>> os.environ['DEFAULT_PROMPT'] = '$'
+    >>> print(envsubst('$USER@$HOST ${PS1:-$DEFAULT_PROMPT}:'))
+
+Also supports $0, $1, etc. from argv.
