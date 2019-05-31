@@ -57,8 +57,8 @@ def _repl_extended_env_var(m):
         return os.environ.get(var_name, '')
 
 
-_simple_re = re.compile(r'\$([A-Za-z0-9_]+)')
-_extended_re = re.compile(r'\$\{([A-Za-z0-9_]+)((:?-)([^}]+))?\}')
+_simple_re = re.compile(r'(?<!\\)\$([A-Za-z0-9_]+)')
+_extended_re = re.compile(r'(?<!\\)\$\{([A-Za-z0-9_]+)((:?-)([^}]+))?\}')
 
 
 def envsubst(string):

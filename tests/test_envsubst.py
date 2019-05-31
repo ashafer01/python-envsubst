@@ -126,3 +126,11 @@ class TestEnvsubst(unittest.TestCase):
         )
         actual = envsubst(test_str)
         self.assertEqual(actual, expected)
+
+    def test_escaped(self):
+        tests = [
+            r'i am an \$ESCAPED variable',
+            r'i am an \${ESCAPED:-bracketed} \${expression}',
+        ]
+        for test in tests:
+            self.assertEqual(test, envsubst(test))
