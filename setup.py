@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='envsubst',
-    version='0.1.2',
+    version='0.1.3',
     description='Substitute environment variables in a string',
     long_description=long_desc,
     author='Alex Shafer',

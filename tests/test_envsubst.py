@@ -134,3 +134,14 @@ class TestEnvsubst(unittest.TestCase):
         ]
         for test in tests:
             self.assertEqual(test, envsubst(test))
+
+    def test_simple_var_default(self):
+        default_val = 'test default val'
+        os.environ['DEFAULT'] = default_val
+        os.environ['TEST'] = ''
+
+        test_fmt = 'abc {0} def'
+        test_str = test_fmt.format('${TEST:-$DEFAULT}')
+        expected = test_fmt.format(default_val)
+        actual = envsubst(test_str)
+        self.assertEqual(actual, expected)

@@ -31,6 +31,10 @@ import re
 import os
 
 
+_simple_re = re.compile(r'(?<!\\)\$([A-Za-z0-9_]+)')
+_extended_re = re.compile(r'(?<!\\)\$\{([A-Za-z0-9_]+)((:?-)([^}]+))?\}')
+
+
 def _repl_simple_env_var(m):
     var_name = m.group(1)
     return os.environ.get(var_name, '')
@@ -41,6 +45,7 @@ def _repl_extended_env_var(m):
     default_spec = m.group(2)
     if default_spec:
         default = m.group(4)
+        default = _simple_re.sub(_repl_simple_env_var, default)
         if m.group(3) == ':-':
             # use default if var is unset or empty
             env_var = os.environ.get(var_name)
@@ -55,10 +60,6 @@ def _repl_extended_env_var(m):
             raise RuntimeError('unexpected string matched regex')
     else:
         return os.environ.get(var_name, '')
-
-
-_simple_re = re.compile(r'(?<!\\)\$([A-Za-z0-9_]+)')
-_extended_re = re.compile(r'(?<!\\)\$\{([A-Za-z0-9_]+)((:?-)([^}]+))?\}')
 
 
 def envsubst(string):
