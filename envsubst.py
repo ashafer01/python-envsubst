@@ -100,3 +100,27 @@ def envsubst(string):
     # handle bracketed env vars with optional default specification
     b = _extended_re.sub(_repl_extended_env_var, a)
     return b
+
+
+if __name__ == '__main__':
+    opened = False
+    f = sys.stdin
+    try:
+        try:
+            fn = sys.argv[1]
+            if fn != '-':
+                f = open(fn)
+                opened = True
+        except IndexError:
+            pass
+
+        data = f.read()
+        try:
+            data = data.decode('utf-8')
+        except AttributeError:
+            pass
+
+        sys.stdout.write(envsubst(data))
+    finally:
+        if opened:
+            f.close()
