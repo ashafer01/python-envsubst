@@ -102,7 +102,7 @@ def envsubst(string):
     return b
 
 
-if __name__ == '__main__':
+def main():
     opened = False
     f = sys.stdin
     try:
@@ -124,3 +124,7 @@ if __name__ == '__main__':
     finally:
         if opened:
             f.close()
+
+
+if __name__ == '__main__':
+    main()

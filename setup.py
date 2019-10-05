@@ -13,4 +13,9 @@ setup(
     url='https://github.com/ashafer01/python-envsubst',
     license='MIT',
     py_modules=['envsubst'],
+    entry_points={
+        'console_scripts': [
+            'envsubst = envsubst.main',
+        ],
+    },
 )
