@@ -15,7 +15,7 @@ setup(
     py_modules=['envsubst'],
     entry_points={
         'console_scripts': [
-            'envsubst = envsubst.main',
+            'envsubst = envsubst:main',
         ],
     },
 )
