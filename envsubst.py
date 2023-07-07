@@ -7,7 +7,7 @@ For more info:
 """
 # MIT License
 # 
-# Copyright (c) 2019 Alex Shafer
+# Copyright (c) 2019 Alex Shafer, Demetry Pascal
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,16 +27,21 @@ For more info:
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import Union, Optional
+
 import re
 import os
 import sys
+from pathlib import Path
 
+
+#region UTILS
 
 _simple_re = re.compile(r'(?<!\\)\$([A-Za-z0-9_]+)')
 _extended_re = re.compile(r'(?<!\\)\$\{([A-Za-z0-9_]+)((:?-)([^}]+))?\}')
 
 
-def _resolve_var(var_name, default=None):
+def _resolve_var(var_name: str, default=None):
     try:
         index = int(var_name)
         try:
@@ -44,7 +49,7 @@ def _resolve_var(var_name, default=None):
         except IndexError:
             return default
     except ValueError:
-        return os.environ.get(var_name, default)
+        return os.getenv(var_name, default)
 
 
 def _repl_simple_env_var(m):
@@ -74,7 +79,16 @@ def _repl_extended_env_var(m):
         return _resolve_var(var_name, '')
 
 
-def envsubst(string):
+def mkdir_of_file(file_path: Union[str, os.PathLike]):
+    """
+    ensures file parent dir existence
+    """
+    Path(file_path).parent.mkdir(parents=True, exist_ok=True)
+
+#endregion
+
+
+def envsubst(string: str) -> str:
     """
     Substitute environment variables in the given string
 
@@ -100,6 +114,28 @@ def envsubst(string):
     # handle bracketed env vars with optional default specification
     b = _extended_re.sub(_repl_extended_env_var, a)
     return b
+
+
+def envsubst_from_file(path: Union[str, os.PathLike], encoding: Optional[str] = 'utf-8') -> str:
+    """reads file with env variables substitutions"""
+    text = Path(path).read_text(encoding=encoding)
+    return envsubst(text)
+
+
+def envsubst_file_convert(
+    path_in: Union[str, os.PathLike],
+    path_out: Optional[Union[str, os.PathLike]] = None,
+    encoding: Optional[str] = 'utf-8'
+) -> None:
+    """performs env variables substitutions on file and saves result to file"""
+
+    path_out = path_out or path_in
+    mkdir_of_file(path_out)
+    Path(path_out).write_text(
+        envsubst_from_file(path_in, encoding=encoding),
+        encoding=encoding
+    )
+
 
 
 def main():
